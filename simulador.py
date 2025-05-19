@@ -20,3 +20,18 @@ def depositar():
             entrada_valor.delete(0, tk.END)
     except ValueError:
         messagebox.showerror("Erro", "Digite um valor válido.")
+
+def sacar():
+    global saldo
+    try:
+        valor = float(entrada_valor.get())
+        if valor <= 0:
+            messagebox.showerror('Erro', 'Digite um valor maior que zero')
+        elif valor > saldo:
+            messagebox.showerror('Erro', 'Saldo Insuficiente.')
+        else:
+            saldo -= valor
+            messagebox.showinfo('Saque', f'Saque de R${valor:.2f} realizado com sucesso')
+            entrada_valor.delete(0, tk.END) 
+    except ValueError:
+        messagebox.showerror("Erro", "Digite um valor válido.")
