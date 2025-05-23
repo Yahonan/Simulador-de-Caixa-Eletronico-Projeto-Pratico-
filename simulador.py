@@ -75,4 +75,4 @@ def resetar_conta():
         
 
 def abrir_caixa():
-    
+   login.frame.destroy() 
