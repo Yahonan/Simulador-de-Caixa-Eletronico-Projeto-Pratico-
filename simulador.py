@@ -73,4 +73,6 @@ def resetar_conta():
         historico.clear()
         messagebox.showinfo("Resetado", "Conta zerada com sucesso!")
         
-        
+
+def abrir_caixa():
+    
