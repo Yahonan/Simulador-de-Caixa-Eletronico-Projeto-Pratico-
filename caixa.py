@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 saldo = 1000.0
-usuario_correto = "admin"
+usuario_correto = "Mozão"
 senha_correta = "1234"
 historico = []
 
@@ -79,13 +79,15 @@ def resetar_conta():
 def abrir_caixa():
     login_frame.destroy()
 
-    sombra = tk.Frame(janela, bg="#a3b1c6", width=310, height=340)
+    sombra = tk.Frame(janela, bg="#a3b1c6", width=310, height=440)
     sombra.place(x=48, y=38)
 
-    frame = tk.Frame(janela, bg="#f8f9fa", width=310, height=340)
+    frame = tk.Frame(janela, bg="#f8f9fa", width=310, height=440)
     frame.place(x=40, y=30)
 
-    tk.Label(frame, text="Caixa Eletrônico", font=("Segoe UI", 16, "bold"), bg="#f8f9fa").place(relx=0.5, y=30, anchor="center")
+    tk.Label(frame, text=f"Bem-vindo, {usuario_correto}!", font=("Segoe UI", 10), bg="#f8f9fa", fg="#333").place(x=30, y=0)
+
+    tk.Label(frame, text="Caixa Eletrônico", font=("Segoe UI", 16, "bold"), bg="#f8f9fa").place(relx=0.5, y=40, anchor="center")
 
     tk.Label(frame, text="Valor (R$):", font=("Segoe UI", 11), bg="#f8f9fa").place(x=30, y=80)
 
@@ -98,7 +100,9 @@ def abrir_caixa():
     tk.Button(frame, text="Ver Saldo", bg="#4CAF50", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=160)
     tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=200)
     tk.Button(frame, text="Sacar", bg="#FF9800", fg="white", command=sacar, **estilo_botao).place(x=30, y=240)
-    tk.Button(frame, text="Sair", bg="#f44336", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=280)
+    tk.Button(frame, text="Resetar Conta", bg="#e91e63", fg="white", command=resetar_conta, **estilo_botao).place(x=30, y=280)
+    tk.Button(frame, text="Sair", bg="#f44336", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=400)
+
 
 def fazer_login():
     usuario = entrada_usuario.get()
