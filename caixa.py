@@ -76,6 +76,26 @@ def resetar_conta():
         historico.clear()
         messagebox.showinfo("Resetado", "Conta zerada com sucesso!")
 
+def transferir():
+    global saldo 
+    try:
+        valor = float(entrada_valor.get())
+        destinatario = entrada_destinatario.get()
+        if not destinatario:
+            messagebox.showerror("Erro", "Digite um destinatário para realizar a transferência.")
+        elif valor <= 0:
+            messagebox.showerror("Erro","Digite um valor válido para a transação.")
+        elif valor > saldo:
+            messagebox.showerror("Erro","Você não tem saldo disponnível para continuar com a transação!!")
+        else:
+            saldo -= valor 
+            historico.append(f"Transferência de R${valor:.2f} para {destinatario}")
+            messagebox.showinfo("Transferência", f"Transferência de R${valor:.2f} para {destinatario} foi realizada com sucesos!!!")
+            entrada_valor.delete(0, tk END)
+            entrada_destinatario.delete(0, tk.END) 
+        except ValueError:
+            messagebox.showerror("Erro", "Digite um valor válido para a transação.")
+        
 def abrir_caixa():
     login_frame.destroy()
 
