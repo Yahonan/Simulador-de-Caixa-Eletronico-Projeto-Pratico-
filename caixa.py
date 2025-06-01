@@ -91,7 +91,7 @@ def transferir():
             saldo -= valor 
             historico.append(f"Transferência de R${valor:.2f} para {destinatario}")
             messagebox.showinfo("Transferência", f"Transferência de R${valor:.2f} para {destinatario} foi realizada com sucesos!!!")
-            entrada_valor.delete(0, tk END)
+            entrada_valor.delete(0, tk.END)
             entrada_destinatario.delete(0, tk.END) 
         except ValueError:
             messagebox.showerror("Erro", "Digite um valor válido para a transação.")
@@ -115,6 +115,12 @@ def abrir_caixa():
     entrada_valor = tk.Entry(frame, font=("Segoe UI", 12), width=20, bd=1, relief="solid", justify="center")
     entrada_valor.place(x=30, y=110)
 
+    tk.label(frame, text="Destinatário:", font=("Sego UI", 11), bg="#f8f9fa").place(x=30, y=140)
+    global entrada_destinatario
+    entrada_destinatario = tk.Entry(frame, font =("Segoe UI", 12), width=20, bd=1,
+    relief="solid", justify="center")
+    entrada_destinatario.place(x=30, y=170)
+    
     estilo_botao = {"font": ("Segoe UI", 11, "bold"), "width": 20, "height": 1, "bd": 0, "relief": "flat"}
 
     tk.Button(frame, text="Ver Saldo", bg="#4CAF50", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=160)
