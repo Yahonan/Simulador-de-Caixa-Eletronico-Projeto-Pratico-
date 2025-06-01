@@ -6,6 +6,18 @@ usuario_correto = "Mozão"
 senha_correta = "1234"
 historico = []
 
+# Variáveis globais para os widgets
+entrada_valor = None
+entrada_destinatario = None
+janela_senha = None
+entrada_nova_senha = None
+entrada_boleto = None
+
+# Posições verticais para os elementos na tela
+Y_POSITION_NEW_FIELD_1 = 80
+Y_POSITION_NEW_FIELD_2 = 110
+Y_POSITION_NEW_BUTTON = 150
+
 def ver_saldo():
     messagebox.showinfo("Saldo", f"Seu saldo atual é: R$ {saldo:.2f}")
 
@@ -19,7 +31,7 @@ def depositar():
             saldo += valor
             messagebox.showinfo("Depósito", f"Depósito de R$ {valor:.2f} realizado com sucesso.")
             entrada_valor.delete(0, tk.END)
-        historico.append(f"Depósito de R${valor:.2f}")    
+        historico.append(f"Depósito de R${valor:.2f}")
     except ValueError:
         messagebox.showerror("Erro", "Digite um valor válido.")
 
@@ -35,65 +47,86 @@ def sacar():
             saldo -= valor
             historico.append(f"Saque de R${valor:.2f}")
             messagebox.showinfo('Saque', f'Saque de R${valor:.2f} realizado com sucesso')
-            entrada_valor.delete(0, tk.END) 
+            entrada_valor.delete(0, tk.END)
     except ValueError:
         messagebox.showerror("Erro", "Digite um valor válido.")
 
 def mostrar_historico():
     if historico:
         transacoes = "\n".join(historico)
+        messagebox.showinfo("Histórico", transacoes)
     else:
-        transacoes = "Nenhuma transação registrada ainda"
-        messagebox.showinfo("Historico:", transacoes)
+        messagebox.showinfo("Histórico", "Nenhuma transação registrada ainda")
 
 def trocar_senha():
-    global janela
-    global nova_senha
+    global janela_senha, entrada_nova_senha
     janela_senha = tk.Toplevel(janela)
     janela_senha.title("Trocar Senha")
     janela_senha.geometry("300x200")
     janela_senha.configure(bg="#f8f9fa")
     janela_senha.resizable(False, False)
     tk.Label(janela_senha, text="Nova Senha", font=("Segoe UI", 11), bg="#f8f9fa").pack(pady=20)
-    nova_senha.entry = tk.Entry(janela_senha, font=("Segoe UI", 12), show="*", justify="center")
-    nova_senha_entry.pack(pady=5)
+    entrada_nova_senha = tk.Entry(janela_senha, font=("Segoe UI", 12), show="*", justify="center")
+    entrada_nova_senha.pack(pady=5)
+    tk.Button(janela_senha, text="Salvar", command=salvar_nova_senha).pack()
 
 def salvar_nova_senha():
-    global senha_correta  
+    global senha_correta
     nova_senha = entrada_nova_senha.get()
     if len(nova_senha) < 4:
-        messagebox.showerror("Erro!", "A senha deve ter pelo menos mais de 4 digítos")
+        messagebox.showerror("Erro!", "A senha deve ter pelo menos mais de 4 dígitos")
     else:
         senha_correta = nova_senha
         messagebox.showinfo("Sucesso", "Senha alterada com sucesso!")
         janela_senha.destroy()
-        
+
 def resetar_conta():
     global saldo, historico
-    resposta = messagebox.askyesno("Resetar", "Tem certeza que deseja zerar a conta e apagar o historico:")
+    resposta = messagebox.askyesno("Resetar", "Tem certeza que deseja zerar a conta e apagar o histórico?")
     if resposta:
         saldo = 0.0
         historico.clear()
         messagebox.showinfo("Resetado", "Conta zerada com sucesso!")
 
+def pagar_conta():
+    global saldo
+    try:
+        valor_pagamento = float(entrada_valor.get())
+        codigo_boleto = entrada_boleto.get()
+
+        if not codigo_boleto:
+            messagebox.showerror("Erro", "Digite o código de barras/identificação da conta.")
+        elif valor_pagamento <= 0:
+            messagebox.showerror("Erro", "Valor do pagamento deve ser positivo.")
+        elif valor_pagamento > saldo:
+            messagebox.showerror("Erro", "Saldo insuficiente.")
+        else:
+            saldo -= valor_pagamento
+            historico.append(f"Pagamento de conta {codigo_boleto}: R${valor_pagamento:.2f}")
+            messagebox.showinfo("Sucesso", f"Pagamento de R${valor_pagamento:.2f} realizado com sucesso.")
+        entrada_valor.delete(0, tk.END)
+        entrada_boleto.delete(0, tk.END)
+    except ValueError:
+        messagebox.showerror("Erro", "Digite um valor de pagamento válido.")
+
 def transferir():
-    global saldo 
+    global saldo
     try:
         valor = float(entrada_valor.get())
         destinatario = entrada_destinatario.get()
         if not destinatario:
             messagebox.showerror("Erro", "Digite um destinatário para realizar a transferência.")
         elif valor <= 0:
-            messagebox.showerror("Erro","Digite um valor válido para a transação.")
+            messagebox.showerror("Erro", "Digite um valor válido para a transação.")
         elif valor > saldo:
-            messagebox.showerror("Erro","Você não tem saldo disponnível para continuar com a transação!!")
+            messagebox.showerror("Erro", "Você não tem saldo disponível para continuar com a transação!!")
         else:
-            saldo -= valor 
+            saldo -= valor
             historico.append(f"Transferência de R${valor:.2f} para {destinatario}")
-            messagebox.showinfo("Transferência", f"Transferência de R${valor:.2f} para {destinatario} foi realizada com sucesos!!!")
-            entrada_valor.delete(0, tk END)
+            messagebox.showinfo("Transferência", f"Transferência de R${valor:.2f} para {destinatario} foi realizada com sucesso!!!")
+            entrada_valor.delete(0, tk.END)
             entrada_destinatario.delete(0, tk.END) 
-        except ValueError:
+    except ValueError:
             messagebox.showerror("Erro", "Digite um valor válido para a transação.")
         
 def abrir_caixa():
@@ -108,6 +141,10 @@ def abrir_caixa():
     tk.Label(frame, text=f"Bem-vindo, {usuario_correto}!", font=("Segoe UI", 10), bg="#f8f9fa", fg="#333").place(x=30, y=0)
 
     tk.Label(frame, text="Caixa Eletrônico", font=("Segoe UI", 16, "bold"), bg="#f8f9fa").place(relx=0.5, y=40, anchor="center")
+    tk.Label(frame, text="Código de Barras:", font=("Segoe UI", 11), bg="#f8f9fa").place(x=30, y=Y_POSITION_NEW_FIELD_1)
+    entrada_boleto = tk.Entry(frame, font=("Segoe UI", 12), width=20, bd=1, relief="solid", justify="center")
+    entrada_boleto.place(x=30, y=Y_POSITION_NEW_FIELD_2)
+    tk.Button(frame, text="Pagar Conta", bg="#SOME_COLOR", fg="white", command=pagar_conta,estilo_botao).place(x=30, y=Y_POSITION_NEW_BUTTON)
 
     tk.Label(frame, text="Valor (R$):", font=("Segoe UI", 11), bg="#f8f9fa").place(x=30, y=80)
 
@@ -122,6 +159,7 @@ def abrir_caixa():
     tk.Button(frame, text="Sacar", bg="#FF9800", fg="white", command=sacar, **estilo_botao).place(x=30, y=240)
     tk.Button(frame, text="Resetar Conta", bg="#e91e63", fg="white", command=resetar_conta, **estilo_botao).place(x=30, y=280)
     tk.Button(frame, text="Sair", bg="#f44336", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=400)
+    
 
 
 def fazer_login():
@@ -132,6 +170,7 @@ def fazer_login():
         abrir_caixa()
     else:
         messagebox.showerror("Login inválido", "Usuário ou senha incorretos.")
+        
         
 janela = tk.Tk()
 janela.title("Login - Caixa Eletrônico")
