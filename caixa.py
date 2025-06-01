@@ -6,6 +6,13 @@ usuario_correto = "Mozão"
 senha_correta = "1234"
 historico = []
 
+# Variáveis globais para os widgets
+entrada_valor = None
+entrada_destinatario = None
+janela_senha = None
+entrada_nova_senha = None
+entrada_boleto = None
+
 def ver_saldo():
     messagebox.showinfo("Saldo", f"Seu saldo atual é: R$ {saldo:.2f}")
 
@@ -19,7 +26,7 @@ def depositar():
             saldo += valor
             messagebox.showinfo("Depósito", f"Depósito de R$ {valor:.2f} realizado com sucesso.")
             entrada_valor.delete(0, tk.END)
-            historico.append(f"Depósito de R${valor:.2f}")  # Corrigido: append dentro do else
+            historico.append(f"Depósito de R${valor:.2f}")
     except ValueError:
         messagebox.showerror("Erro", "Digite um valor válido.")
 
@@ -35,7 +42,7 @@ def sacar():
             saldo -= valor
             historico.append(f"Saque de R${valor:.2f}")
             messagebox.showinfo('Saque', f'Saque de R${valor:.2f} realizado com sucesso')
-            entrada_valor.delete(0, tk.END) 
+            entrada_valor.delete(0, tk.END)
     except ValueError:
         messagebox.showerror("Erro", "Digite um valor válido.")
 
@@ -44,7 +51,7 @@ def mostrar_historico():
         transacoes = "\n".join(historico)
     else:
         transacoes = "Nenhuma transação registrada ainda"
-    messagebox.showinfo("Histórico", transacoes)  # Corrigido: mostrar sempre o messagebox
+    messagebox.showinfo("Histórico", transacoes)
 
 def trocar_senha():
     global janela_senha, entrada_nova_senha
@@ -70,11 +77,32 @@ def salvar_nova_senha():
 
 def resetar_conta():
     global saldo, historico
-    resposta = messagebox.askyesno("Resetar", "Tem certeza que deseja zerar a conta e apagar o historico:")
+    resposta = messagebox.askyesno("Resetar", "Tem certeza que deseja zerar a conta e apagar o histórico?")
     if resposta:
         saldo = 0.0
         historico.clear()
         messagebox.showinfo("Resetado", "Conta zerada com sucesso!")
+
+def pagar_conta():
+    global saldo
+    try:
+        valor_pagamento = float(entrada_valor.get())
+        codigo_boleto = entrada_boleto.get()
+
+        if not codigo_boleto:
+            messagebox.showerror("Erro", "Digite o código de barras/identificação da conta.")
+        elif valor_pagamento <= 0:
+            messagebox.showerror("Erro", "Valor do pagamento deve ser positivo.")
+        elif valor_pagamento > saldo:
+            messagebox.showerror("Erro", "Saldo insuficiente.")
+        else:
+            saldo -= valor_pagamento
+            historico.append(f"Pagamento de conta {codigo_boleto}: R${valor_pagamento:.2f}")
+            messagebox.showinfo("Sucesso", f"Pagamento de R${valor_pagamento:.2f} realizado com sucesso.")
+        entrada_valor.delete(0, tk.END)
+        entrada_boleto.delete(0, tk.END)
+    except ValueError:
+        messagebox.showerror("Erro", "Digite um valor de pagamento válido.")
 
 def transferir():
     global saldo
@@ -97,41 +125,50 @@ def transferir():
         messagebox.showerror("Erro", "Digite um valor válido para a transação.")
 
 def abrir_caixa():
+    global entrada_valor, entrada_destinatario, entrada_boleto
+
     login_frame.destroy()
 
-    # Ajuste o tamanho dos frames para ocupar mais espaço da janela
-    sombra = tk.Frame(janela, bg="#a3b1c6", width=500, height=600)
-    sombra.place(x=58, y=48)
+    # Aumente também o tamanho dos frames internos
+    largura_frame = 800
+    altura_frame = 800
 
-    frame = tk.Frame(janela, bg="#f8f9fa", width=500, height=600)
-    frame.place(x=50, y=40)
+    sombra = tk.Frame(janela, bg="#a3b1c6", width=largura_frame+10, height=altura_frame+10)
+    sombra.place(relx=0.5, rely=0.5, anchor="center")
+
+    frame = tk.Frame(janela, bg="#f8f9fa", width=largura_frame, height=altura_frame)
+    frame.place(relx=0.5, rely=0.5, anchor="center")
 
     tk.Label(frame, text=f"Bem-vindo, {usuario_correto}!", font=("Segoe UI", 12), bg="#f8f9fa", fg="#333").place(x=30, y=10)
-
     tk.Label(frame, text="Caixa Eletrônico", font=("Segoe UI", 20, "bold"), bg="#f8f9fa").place(relx=0.5, y=50, anchor="center")
 
-    tk.Label(frame, text="Valor (R$):", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=100)
+    # Campo para código de barras (boleto)
+    tk.Label(frame, text="Código de Barras:", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=100)
+    entrada_boleto = tk.Entry(frame, font=("Segoe UI", 14), width=25, bd=1, relief="solid", justify="center")
+    entrada_boleto.place(x=30, y=130)
 
-    global entrada_valor
+    # Campo para valor
+    tk.Label(frame, text="Valor (R$):", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=180)
     entrada_valor = tk.Entry(frame, font=("Segoe UI", 14), width=25, bd=1, relief="solid", justify="center")
-    entrada_valor.place(x=30, y=130)
+    entrada_valor.place(x=30, y=210)
 
-    tk.Label(frame, text="Destinatário:", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=180)
-    global entrada_destinatario
+    # Campo para destinatário
+    tk.Label(frame, text="Destinatário:", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=260)
     entrada_destinatario = tk.Entry(frame, font=("Segoe UI", 14), width=25, bd=1, relief="solid", justify="center")
-    entrada_destinatario.place(x=30, y=210)
+    entrada_destinatario.place(x=30, y=290)
 
     estilo_botao = {"font": ("Segoe UI", 12, "bold"), "width": 25, "height": 1, "bd": 0, "relief": "flat"}
 
-    tk.Button(frame, text="Ver Saldo", bg="#4CAF50", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=260)
-    tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=310)
-    tk.Button(frame, text="Sacar", bg="#FF9800", fg="white", command=sacar, **estilo_botao).place(x=30, y=360)
-    tk.Button(frame, text="Transferir", bg="#9C27B0", fg="white", command=transferir, **estilo_botao).place(x=30, y=410)
-    tk.Button(frame, text="Histórico", bg="#607D8B", fg="white", command=mostrar_historico, **estilo_botao).place(x=30, y=460)
-    tk.Button(frame, text="Trocar Senha", bg="#FFC107", fg="black", command=trocar_senha, **estilo_botao).place(x=30, y=510)
-    tk.Button(frame, text="Resetar Conta", bg="#e91e63", fg="white", command=resetar_conta, **estilo_botao).place(x=30, y=560)
-    tk.Button(frame, text="Sair", bg="#f44336", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=610)
+    tk.Button(frame, text="Pagar Conta", bg="#0F99DF", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=340)
+    tk.Button(frame, text="Ver Saldo", bg="#0F99DF", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=400)
+    tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=460)
+    tk.Button(frame, text="Sacar", bg="#0F99DF", fg="white", command=sacar, **estilo_botao).place(x=30, y=520)
+    tk.Button(frame, text="Transferir", bg="#0F99DF", fg="white", command=transferir, **estilo_botao).place(x=30, y=580)
 
+    tk.Button(frame, text="Histórico", bg="#0F99DF", fg="white", command=mostrar_historico, **estilo_botao).place(x=270, y=400)
+    tk.Button(frame, text="Trocar Senha", bg="#FA9600", fg="black", command=trocar_senha, **estilo_botao).place(x=270, y=460)
+    tk.Button(frame, text="Resetar Conta", bg="#ff0000", fg="white", command=resetar_conta, **estilo_botao).place(x=270, y=520)
+    tk.Button(frame, text="Sair", bg="#ff0000", fg="white", command=janela.destroy, **estilo_botao).place(x=270, y=580)
 
 def fazer_login():
     usuario = entrada_usuario.get()
@@ -141,10 +178,10 @@ def fazer_login():
         abrir_caixa()
     else:
         messagebox.showerror("Login inválido", "Usuário ou senha incorretos.")
-        
+
 janela = tk.Tk()
 janela.title("Login - Caixa Eletrônico")
-janela.geometry("600x600") 
+janela.geometry("900x900")  # Aumente aqui o tamanho da janela principal
 janela.configure(bg="#e0e5ec")
 janela.resizable(False, False)
 
@@ -153,11 +190,11 @@ login_frame.place(relx=0.5, rely=0.5, anchor="center")
 
 tk.Label(login_frame, text="Login", font=("Segoe UI", 16, "bold"), bg="#f8f9fa").pack(pady=20)
 
-tk.Label(login_frame, text="Usuário:", font=("Segoe UI", 11), bg="#f9f9fa").pack()
+tk.Label(login_frame, text="Usuário:", font=("Segoe UI", 11), bg="#f8f9fa").pack()
 entrada_usuario = tk.Entry(login_frame, font=("Segoe UI", 12), justify="center")
 entrada_usuario.pack(pady=5)
 
-tk.Label(login_frame, text="Senha:", font=("Segoe UI", 11), bg="#f9f9fa").pack()
+tk.Label(login_frame, text="Senha:", font=("Segoe UI", 11), bg="#f8f9fa").pack()
 entrada_senha = tk.Entry(login_frame, font=("Segoe UI", 12), show="*", justify="center")
 entrada_senha.pack(pady=5)
 
