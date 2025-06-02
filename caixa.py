@@ -137,16 +137,30 @@ def abrir_caixa():
 
     login_frame.destroy()
 
-    # Aumente também o tamanho dos frames internos
-    largura_frame = 800
-    altura_frame = 800
+    largura_frame = 1100 # menor rolagem
+    altura_frame = 400  # maior rolagem
 
     sombra = tk.Frame(janela, bg="#a3b1c6", width=largura_frame+10, height=altura_frame+10)
     sombra.place(relx=0.5, rely=0.5, anchor="center")
 
-    frame = tk.Frame(janela, bg="#f8f9fa", width=largura_frame, height=altura_frame)
-    frame.place(relx=0.5, rely=0.5, anchor="center")
+    canvas = tk.Canvas(janela, bg="#f8f9fa", width=largura_frame, height=altura_frame, highlightthickness=0)
+    canvas.place(relx=0.5, rely=0.5, anchor="center")
 
+    scrollbar = tk.Scrollbar(janela, orient="vertical", command=canvas.yview)
+    scrollbar.place(relx=0.97, rely=0.5, anchor="center", height=altura_frame)
+
+    # Definir frame interno
+    frame = tk.Frame(canvas, bg="#f8f9fa", width=largura_frame, height=900)
+    frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+    canvas.create_window((0, 0), window=frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    def _on_mouse_wheel(event):
+        canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
+
+    # Adicione seus widgets normalmente no frame
     tk.Label(frame, text=f"Bem-vindo, {usuario_correto}!", font=("Segoe UI", 12), bg="#f8f9fa", fg="#333").place(x=30, y=10)
     tk.Label(frame, text="Caixa Eletrônico", font=("Segoe UI", 20, "bold"), bg="#f8f9fa").place(relx=0.5, y=50, anchor="center")
 
@@ -167,16 +181,19 @@ def abrir_caixa():
 
     estilo_botao = {"font": ("Segoe UI", 12, "bold"), "width": 25, "height": 1, "bd": 0, "relief": "flat"}
 
-    tk.Button(frame, text="Pagar Conta", bg="#0F99DF", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=340)
-    tk.Button(frame, text="Ver Saldo", bg="#0F99DF", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=400)
-    tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=460)
-    tk.Button(frame, text="Sacar", bg="#0F99DF", fg="white", command=sacar, **estilo_botao).place(x=30, y=520)
-    tk.Button(frame, text="Transferir", bg="#0F99DF", fg="white", command=transferir, **estilo_botao).place(x=30, y=580)
+    # Resolvi deixar eles alinhados um embaixo do outro, para que não fiquem colados.
+    espacamento = 60
+    y_inicial = 340
 
-    tk.Button(frame, text="Histórico", bg="#0F99DF", fg="white", command=mostrar_historico, **estilo_botao).place(x=270, y=400)
-    tk.Button(frame, text="Trocar Senha", bg="#FA9600", fg="black", command=trocar_senha, **estilo_botao).place(x=270, y=460)
-    tk.Button(frame, text="Resetar Conta", bg="#ff0000", fg="white", command=resetar_conta, **estilo_botao).place(x=270, y=520)
-    tk.Button(frame, text="Sair", bg="#ff0000", fg="white", command=janela.destroy, **estilo_botao).place(x=270, y=580)
+    tk.Button(frame, text="Pagar Conta", bg="#0F99DF", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*0)
+    tk.Button(frame, text="Ver Saldo", bg="#0F99DF", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=y_inicial + espacamento*1)
+    tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=y_inicial + espacamento*2)
+    tk.Button(frame, text="Sacar", bg="#0F99DF", fg="white", command=sacar, **estilo_botao).place(x=30, y=y_inicial + espacamento*3)
+    tk.Button(frame, text="Transferir", bg="#0F99DF", fg="white", command=transferir, **estilo_botao).place(x=30, y=y_inicial + espacamento*4)
+    tk.Button(frame, text="Histórico", bg="#0F99DF", fg="white", command=mostrar_historico, **estilo_botao).place(x=30, y=y_inicial + espacamento*5)
+    tk.Button(frame, text="Trocar Senha", bg="#FA9600", fg="black", command=trocar_senha, **estilo_botao).place(x=30, y=y_inicial + espacamento*6)
+    tk.Button(frame, text="Resetar Conta", bg="#ff0000", fg="white", command=resetar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*7)
+    tk.Button(frame, text="Sair", bg="#ff0000", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=y_inicial + espacamento*8)
 
 def fazer_login():
     usuario = entrada_usuario.get()
@@ -189,7 +206,7 @@ def fazer_login():
 
 janela = tk.Tk()
 janela.title("Login - Caixa Eletrônico")
-janela.geometry("900x900")  # Se quiser aumentar o tamanho da Janela é só alterar através dessa linha!
+janela.geometry("1200x800")  # Se quiser aumentar o tamanho da Janela é só alterar através dessa linha!
 janela.configure(bg="#e0e5ec")
 janela.resizable(False, False)
 
