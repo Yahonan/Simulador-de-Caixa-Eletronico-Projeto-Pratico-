@@ -13,6 +13,14 @@ janela_senha = None
 entrada_nova_senha = None
 entrada_boleto = None
 
+# Posições verticais para os elementos na tela
+Y_POSITION_NEW_FIELD_1 = 80
+Y_POSITION_NEW_FIELD_2 = 110
+Y_POSITION_NEW_BUTTON = 150
+
+estilo_botao = {"font": ("Segoe UI", 11, "bold"), "width": 20, "height": 1, "bd": 0, "relief": "flat"}
+
+
 def ver_saldo():
     messagebox.showinfo("Saldo", f"Seu saldo atual é: R$ {saldo:.2f}")
 
