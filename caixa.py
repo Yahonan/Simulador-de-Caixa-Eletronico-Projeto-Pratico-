@@ -181,7 +181,7 @@ def fazer_login():
 
 janela = tk.Tk()
 janela.title("Login - Caixa Eletrônico")
-janela.geometry("900x900")  # Aumente aqui o tamanho da janela principal
+janela.geometry("900x900")  # Se quiser aumentar o tamanho da Janela é só alterar através dessa linha!
 janela.configure(bg="#e0e5ec")
 janela.resizable(False, False)
 
