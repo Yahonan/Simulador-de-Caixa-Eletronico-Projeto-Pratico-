@@ -16,6 +16,8 @@ janela_senha = None
 entrada_nova_senha = None
 entrada_boleto = None
 frame = None
+canvas = None
+sombra = None
 
 # Função para alternar modo escuro/claro
 def alternar_modo():
@@ -35,18 +37,18 @@ def alternar_modo():
         cor_botao_fg = "white"
 
     janela.configure(bg=cor_fundo)
-    # Atualiza widgets da janela
-    for widget in janela.winfo_children():
-        try:
-            widget.configure(bg=cor_frame, fg=cor_texto)
-        except:
-            pass
-    # Atualiza widgets do frame principal
+    # Adicionando atualização de sombra e do canvas
+    if canvas: 
+        canvas.configure(bg=cor_fundo)
+    if sombra:
+        sombra.configure(bg="#222831" if modo_escuro else "#a3b1c6")
+
+    # Atualização widgets do frame principal
     if frame:
         for widget in frame.winfo_children():
             if isinstance(widget, tk.Button):
                 widget.configure(bg=cor_botao, fg=cor_botao_fg)
-            else:
+            elif isinstance(widget, (tk.Label, tk.Entry)):
                 try:
                     widget.configure(bg=cor_frame, fg=cor_texto)
                 except:
