@@ -216,7 +216,7 @@ def abrir_caixa():
     espacamento = 60
     y_inicial = 340
 
-    tk.Button(frame, text="Pagar Conta", bg="#0F99DF", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*0)
+    tk.Button(frame, text="Pagar Conta", bg="#109FE6", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*0)
     tk.Button(frame, text="Ver Saldo", bg="#0F99DF", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=y_inicial + espacamento*1)
     tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=y_inicial + espacamento*2)
     tk.Button(frame, text="Sacar", bg="#0F99DF", fg="white", command=sacar, **estilo_botao).place(x=30, y=y_inicial + espacamento*3)
