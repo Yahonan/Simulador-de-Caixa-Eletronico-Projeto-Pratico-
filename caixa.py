@@ -16,6 +16,8 @@ janela_senha = None
 entrada_nova_senha = None
 entrada_boleto = None
 frame = None
+canvas = None
+sombra = None
 
 # Função para alternar modo escuro/claro
 def alternar_modo():
@@ -25,7 +27,7 @@ def alternar_modo():
         cor_fundo = "#222831"
         cor_frame = "#393E46"
         cor_texto = "#EEEEEE"
-        cor_botao = "#00ADB5"
+        cor_botao = "#04B4BD"
         cor_botao_fg = "#EEEEEE"
     else:
         cor_fundo = "#e0e5ec"
@@ -35,18 +37,18 @@ def alternar_modo():
         cor_botao_fg = "white"
 
     janela.configure(bg=cor_fundo)
-    # Atualiza widgets da janela
-    for widget in janela.winfo_children():
-        try:
-            widget.configure(bg=cor_frame, fg=cor_texto)
-        except:
-            pass
-    # Atualiza widgets do frame principal
+    # Adicionando atualização de sombra e do canvas
+    if canvas: 
+        canvas.configure(bg=cor_fundo)
+    if sombra:
+        sombra.configure(bg="#222831" if modo_escuro else "#a3b1c6")
+
+    # Atualização widgets do frame principal
     if frame:
         for widget in frame.winfo_children():
             if isinstance(widget, tk.Button):
                 widget.configure(bg=cor_botao, fg=cor_botao_fg)
-            else:
+            elif isinstance(widget, (tk.Label, tk.Entry)):
                 try:
                     widget.configure(bg=cor_frame, fg=cor_texto)
                 except:
@@ -216,7 +218,7 @@ def abrir_caixa():
     espacamento = 60
     y_inicial = 340
 
-    tk.Button(frame, text="Pagar Conta", bg="#0F99DF", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*0)
+    tk.Button(frame, text="Pagar Conta", bg="#109FE6", fg="white", command=pagar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*0)
     tk.Button(frame, text="Ver Saldo", bg="#0F99DF", fg="white", command=ver_saldo, **estilo_botao).place(x=30, y=y_inicial + espacamento*1)
     tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=y_inicial + espacamento*2)
     tk.Button(frame, text="Sacar", bg="#0F99DF", fg="white", command=sacar, **estilo_botao).place(x=30, y=y_inicial + espacamento*3)
