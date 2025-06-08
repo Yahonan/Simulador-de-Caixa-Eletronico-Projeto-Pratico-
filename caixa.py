@@ -6,12 +6,50 @@ usuario_correto = "Mozão"
 senha_correta = "1234"
 historico = []
 
+#variavel do modo escuro
+modo_escuro = False
+
 # Variáveis globais para os widgets
 entrada_valor = None
 entrada_destinatario = None
 janela_senha = None
 entrada_nova_senha = None
 entrada_boleto = None
+
+# adicionando um modo escuro!
+def alternar_modo():
+    global modo_escuro, frame
+    modo_escuro = not modo_escuro
+    if modo_escuro:
+        cor_fundo = "#222831"
+        cor_frame = "#393E46"
+        cor_texto = "#EEEEEE"
+        cor_botao = "#00ADB5"
+        cor_botao_fg = "#EEEEEE"
+    else:
+        cor_fundo = "#e0e5ec"
+        cor_frame = "#f8f9fa"
+        cor_texto = "#333"
+        cor_botao = "#0F99DF"
+        cor_botao_fg = "white"
+
+    janela.configure(bg=cor_fundo)
+    # Atualiza widgets da janela
+    for widget in janela.winfo_children():
+        try:
+            widget.configure(bg=cor_frame, fg=cor_texto)
+        except:
+            pass
+    # Atualiza widgets do frame principal
+    for widget in frame.winfo_children():
+        # Se for botão, muda bg e fg do botão
+        if isinstance(widget, tk.Button):
+            widget.configure(bg=cor_botao, fg=cor_botao_fg)
+        else:
+            try:
+                widget.configure(bg=cor_frame, fg=cor_texto)
+            except:
+                pass
 
 def ver_saldo():
     messagebox.showinfo("Saldo", f"Seu saldo atual é: R$ {saldo:.2f}")
@@ -125,12 +163,12 @@ def transferir():
         messagebox.showerror("Erro", "Digite um valor válido para a transação.")
 
 def abrir_caixa():
-    global entrada_valor, entrada_destinatario, entrada_boleto
+    global entrada_valor, entrada_destinatario, entrada_boleto, frame  # Adicione frame aqui!
 
     login_frame.destroy()
 
-    largura_frame = 1100 # menor rolagem
-    altura_frame = 400  # maior rolagem
+    largura_frame = 1100
+    altura_frame = 400
 
     sombra = tk.Frame(janela, bg="#a3b1c6", width=largura_frame+10, height=altura_frame+10)
     sombra.place(relx=0.5, rely=0.5, anchor="center")
@@ -186,6 +224,8 @@ def abrir_caixa():
     tk.Button(frame, text="Trocar Senha", bg="#FA9600", fg="black", command=trocar_senha, **estilo_botao).place(x=30, y=y_inicial + espacamento*6)
     tk.Button(frame, text="Resetar Conta", bg="#ff0000", fg="white", command=resetar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*7)
     tk.Button(frame, text="Sair", bg="#ff0000", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=y_inicial + espacamento*8)
+    tk.Button(frame, text="Modo Escuro", bg="#222831", fg="#EEEEEE", command=alternar_modo, **estilo_botao).place(x=30, y=y_inicial + espacamento*9)
+
 
 def fazer_login():
     usuario = entrada_usuario.get()
