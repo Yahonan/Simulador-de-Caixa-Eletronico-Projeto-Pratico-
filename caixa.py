@@ -30,7 +30,7 @@ def alternar_modo():
         cor_fundo = "#e0e5ec"
         cor_frame = "#f8f9fa"
         cor_texto = "#333"
-        cor_botao = "#0F99DF"
+        cor_botao = "#13A4EC"
         cor_botao_fg = "white"
 
     janela.configure(bg=cor_fundo)
