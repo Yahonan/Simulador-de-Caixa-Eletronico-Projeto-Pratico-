@@ -6,7 +6,7 @@ usuario_correto = "Mozão"
 senha_correta = "1234"
 historico = []
 
-#variavel do modo escuro
+# Variável do modo escuro
 modo_escuro = False
 
 # Variáveis globais para os widgets
@@ -15,8 +15,9 @@ entrada_destinatario = None
 janela_senha = None
 entrada_nova_senha = None
 entrada_boleto = None
+frame = None
 
-# adicionando um modo escuro!
+# Função para alternar modo escuro/claro
 def alternar_modo():
     global modo_escuro, frame
     modo_escuro = not modo_escuro
@@ -30,7 +31,7 @@ def alternar_modo():
         cor_fundo = "#e0e5ec"
         cor_frame = "#f8f9fa"
         cor_texto = "#333"
-        cor_botao = "#13A4EC"
+        cor_botao = "#0F99DF"
         cor_botao_fg = "white"
 
     janela.configure(bg=cor_fundo)
@@ -41,15 +42,15 @@ def alternar_modo():
         except:
             pass
     # Atualiza widgets do frame principal
-    for widget in frame.winfo_children():
-        # Se for botão, muda bg e fg do botão
-        if isinstance(widget, tk.Button):
-            widget.configure(bg=cor_botao, fg=cor_botao_fg)
-        else:
-            try:
-                widget.configure(bg=cor_frame, fg=cor_texto)
-            except:
-                pass
+    if frame:
+        for widget in frame.winfo_children():
+            if isinstance(widget, tk.Button):
+                widget.configure(bg=cor_botao, fg=cor_botao_fg)
+            else:
+                try:
+                    widget.configure(bg=cor_frame, fg=cor_texto)
+                except:
+                    pass
 
 def ver_saldo():
     messagebox.showinfo("Saldo", f"Seu saldo atual é: R$ {saldo:.2f}")
@@ -57,7 +58,8 @@ def ver_saldo():
 def depositar():
     global saldo
     try:
-        valor = float(entrada_valor.get())
+        valor_str = entrada_valor.get().replace(',', '.')
+        valor = float(valor_str)
         if valor <= 0:
             messagebox.showerror("Erro", "Digite um valor maior que zero.")
         else:
@@ -71,7 +73,8 @@ def depositar():
 def sacar():
     global saldo
     try:
-        valor = float(entrada_valor.get())
+        valor_str = entrada_valor.get().replace(',', '.')
+        valor = float(valor_str)
         if valor <= 0:
             messagebox.showerror('Erro', 'Digite um valor maior que zero')
         elif valor > saldo:
@@ -124,9 +127,9 @@ def resetar_conta():
 def pagar_conta():
     global saldo
     try:
-        valor_pagamento = float(entrada_valor.get())
+        valor_pagamento_str = entrada_valor.get().replace(',', '.')
+        valor_pagamento = float(valor_pagamento_str)
         codigo_boleto = entrada_boleto.get()
-
         if not codigo_boleto:
             messagebox.showerror("Erro", "Digite o código de barras/identificação da conta.")
         elif valor_pagamento <= 0:
@@ -145,7 +148,8 @@ def pagar_conta():
 def transferir():
     global saldo
     try:
-        valor = float(entrada_valor.get())
+        valor_str = entrada_valor.get().replace(',', '.')
+        valor = float(valor_str)
         destinatario = entrada_destinatario.get()
         if not destinatario:
             messagebox.showerror("Erro", "Digite um destinatário para realizar a transferência.")
@@ -163,7 +167,7 @@ def transferir():
         messagebox.showerror("Erro", "Digite um valor válido para a transação.")
 
 def abrir_caixa():
-    global entrada_valor, entrada_destinatario, entrada_boleto, frame  # Adicione frame aqui!
+    global entrada_valor, entrada_destinatario, entrada_boleto, frame
 
     login_frame.destroy()
 
@@ -179,7 +183,6 @@ def abrir_caixa():
     scrollbar = tk.Scrollbar(janela, orient="vertical", command=canvas.yview)
     scrollbar.place(relx=0.97, rely=0.5, anchor="center", height=altura_frame)
 
-    # Definir frame interno
     frame = tk.Frame(canvas, bg="#f8f9fa", width=largura_frame, height=900)
     frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
@@ -190,28 +193,26 @@ def abrir_caixa():
         canvas.yview_scroll(int(-1*(event.delta/120)), "units")
     canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
 
-    # Adicione seus widgets normalmente no frame
     tk.Label(frame, text=f"Bem-vindo, {usuario_correto}!", font=("Segoe UI", 12), bg="#f8f9fa", fg="#333").place(x=30, y=10)
     tk.Label(frame, text="Caixa Eletrônico", font=("Segoe UI", 20, "bold"), bg="#f8f9fa").place(relx=0.5, y=50, anchor="center")
 
-    # Campo para código de barras (boleto)
     tk.Label(frame, text="Código de Barras:", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=100)
+    global entrada_boleto
     entrada_boleto = tk.Entry(frame, font=("Segoe UI", 14), width=25, bd=1, relief="solid", justify="center")
     entrada_boleto.place(x=30, y=130)
 
-    # Campo para valor
     tk.Label(frame, text="Valor (R$):", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=180)
+    global entrada_valor
     entrada_valor = tk.Entry(frame, font=("Segoe UI", 14), width=25, bd=1, relief="solid", justify="center")
     entrada_valor.place(x=30, y=210)
 
-    # Campo para destinatário
     tk.Label(frame, text="Destinatário:", font=("Segoe UI", 13), bg="#f8f9fa").place(x=30, y=260)
+    global entrada_destinatario
     entrada_destinatario = tk.Entry(frame, font=("Segoe UI", 14), width=25, bd=1, relief="solid", justify="center")
     entrada_destinatario.place(x=30, y=290)
 
     estilo_botao = {"font": ("Segoe UI", 12, "bold"), "width": 25, "height": 1, "bd": 0, "relief": "flat"}
 
-    # Resolvi deixar eles alinhados um embaixo do outro, para que não fiquem colados.
     espacamento = 60
     y_inicial = 340
 
@@ -226,7 +227,6 @@ def abrir_caixa():
     tk.Button(frame, text="Sair", bg="#ff0000", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=y_inicial + espacamento*8)
     tk.Button(frame, text="Modo Escuro", bg="#222831", fg="#EEEEEE", command=alternar_modo, **estilo_botao).place(x=30, y=y_inicial + espacamento*9)
 
-
 def fazer_login():
     usuario = entrada_usuario.get()
     senha = entrada_senha.get()
@@ -238,7 +238,7 @@ def fazer_login():
 
 janela = tk.Tk()
 janela.title("Login - Caixa Eletrônico")
-janela.geometry("1200x800")  # Se quiser aumentar o tamanho da Janela é só alterar através dessa linha!
+janela.geometry("1200x800")
 janela.configure(bg="#e0e5ec")
 janela.resizable(False, False)
 
