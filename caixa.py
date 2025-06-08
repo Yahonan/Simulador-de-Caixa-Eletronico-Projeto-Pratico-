@@ -27,7 +27,7 @@ def alternar_modo():
         cor_fundo = "#222831"
         cor_frame = "#393E46"
         cor_texto = "#EEEEEE"
-        cor_botao = "#00ADB5"
+        cor_botao = "#04B4BD"
         cor_botao_fg = "#EEEEEE"
     else:
         cor_fundo = "#e0e5ec"
