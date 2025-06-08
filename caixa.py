@@ -221,7 +221,7 @@ def abrir_caixa():
     tk.Button(frame, text="Depositar", bg="#2196F3", fg="white", command=depositar, **estilo_botao).place(x=30, y=y_inicial + espacamento*2)
     tk.Button(frame, text="Sacar", bg="#0F99DF", fg="white", command=sacar, **estilo_botao).place(x=30, y=y_inicial + espacamento*3)
     tk.Button(frame, text="Transferir", bg="#0F99DF", fg="white", command=transferir, **estilo_botao).place(x=30, y=y_inicial + espacamento*4)
-    tk.Button(frame, text="Histórico", bg="#0F99DF", fg="white", command=mostrar_historico, **estilo_botao).place(x=30, y=y_inicial + espacamento*5)
+    tk.Button(frame, text="Histórico", bg="#0E92D4", fg="white", command=mostrar_historico, **estilo_botao).place(x=30, y=y_inicial + espacamento*5)
     tk.Button(frame, text="Trocar Senha", bg="#FA9600", fg="black", command=trocar_senha, **estilo_botao).place(x=30, y=y_inicial + espacamento*6)
     tk.Button(frame, text="Resetar Conta", bg="#ff0000", fg="white", command=resetar_conta, **estilo_botao).place(x=30, y=y_inicial + espacamento*7)
     tk.Button(frame, text="Sair", bg="#ff0000", fg="white", command=janela.destroy, **estilo_botao).place(x=30, y=y_inicial + espacamento*8)
